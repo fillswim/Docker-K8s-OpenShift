@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  nginx.conf: "pid /tmp/nginx.pid;\r\nevents {\r\n}\r\n\r\nhttp {\r\n\r\n\tserver
+    {\r\n\r\n\t\tlisten 8080;\r\n\r\n\t\tlocation / {\r\n\t\t\troot /usr/share/nginx/html;\r\n\t\t\tindex
+    index.html index.htm;\r\n\t\t}\r\n\r\n\t\tlocation /quote {\r\n\t\t\tproxy_pass
+    http://quote-service/;\r\n\t\t}\r\n\t}\r\n\r\n\tupstream quote-service {\r\n\t\tserver
+    phraseservice-server:3000;\r\n\t}\r\n\r\n}"
+kind: ConfigMap
+metadata:
+  name: frontend-config-nginx

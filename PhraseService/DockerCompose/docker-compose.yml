@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  backend:
+    image: fillswim/phraseservice-backend:latest
+    container_name: backend-container
+    restart: always
+    hostname: phraseservice-server # Прописан в nginx.conf в frontend-container
+
+  frontend:
+    # build: ./ # Собрать образ или же image
+    image: fillswim/phraseservice-frontend:latest
+    container_name: frontend-container
+    restart: always
+    ports:
+      - 8080:80
+    depends_on:
+      - backend

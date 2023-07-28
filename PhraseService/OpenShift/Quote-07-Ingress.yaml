@@ -1,0 +1,20 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+
+# oc apply -f ./PhraseService/OpenShift/Quote-07-Ingress.yaml
+# oc delete -f ./PhraseService/OpenShift/Quote-07-Ingress.yaml
+
+metadata:
+  name: quote-route
+  labels:
+    app: quote-app
+
+spec:
+  host: quote.apps-crc.testing                              # Адрес
+  to:
+    kind: Service
+    name: quote-frontend-service                                       # Какой сервис выставляется наружу
+    weight: 100
+  port:
+    targetPort: http                                          # Имя порта в сервисе, который выставляется наружу
+  wildcardPolicy: None                                        # Sub-domain: a.quote.apps-crc.testing

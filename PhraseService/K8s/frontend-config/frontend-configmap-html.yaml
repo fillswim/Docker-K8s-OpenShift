@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  index.html: "<!DOCTYPE html>\n<html>\n\n<head>\n\t<meta charset=\"UTF-8\">\n\t<script
+    src=\"https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js\"></script>\n\t<style>\n\t\t.center
+    {\n\t\t\tdisplay: flex;\n\t\t\tjustify-content: center;\n\t\t\talign-items: center;\n\t\t\tflex-direction:
+    column;\n\t\t}\n\t</style>\n</head>\n\n<body>\n\t<div class=\"center\">\n\t\t<h1>Цитаты
+    из Брата</h1>\n\t\t<input type=\"submit\" value=\"В чем сила, брат?\" onclick=\"submit()\">\n\t\t<p
+    id=\"quote\"></p>\n\n\t\t<script>\n\t\t\tfunction submit() {\n\t\t\t\taxios.get('/quote')\n\t\t\t\t\t.then(function
+    (response) {\n\t\t\t\t\t\tdocument.getElementById(\"quote\").innerHTML=response.data\n\t\t\t\t\t})\n\t\t\t\t\t.catch(function
+    (error) {\n\t\t\t\t\t\tconsole.log(error);\n\t\t\t\t\t});\n\t\t\t}\n\n\t\t</script>\n\t</div>\n\n</body>\n\n</html>"
+kind: ConfigMap
+metadata:
+  name: frontend-config-html

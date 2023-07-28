@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+# kubectl apply -f PhraseService/K8s/Quote-07-Ingress.yaml
+# kubectl delete -f PhraseService/K8s/Quote-07-Ingress.yaml
+
+metadata:
+  name: quote-ingress
+  labels:
+    app: quote-app
+
+spec:
+  rules:
+
+  - host: site.fillswim.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: quote-frontend-service # Название сервиса, на который будет отправляться запрос
+            port: 
+              number: 80

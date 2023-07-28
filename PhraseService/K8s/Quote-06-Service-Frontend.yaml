@@ -1,0 +1,19 @@
+apiVersion: v1                          ### Описание Сервиса
+kind: Service
+
+# kubectl apply -f PhraseService/K8s/Quote-06-Service-Frontend.yaml
+# kubectl delete -f PhraseService/K8s/Quote-06-Service-Frontend.yaml
+
+metadata:                               # Имя сервиса
+  name: quote-frontend-service
+  labels:
+    app: quote-app
+
+spec:
+  selector:
+    app: quote-frontend-pod                      #! На поды с какими лейблами будет работать сервис, распространять трафик
+
+  ports:
+    - protocol: TCP
+      port: 80                          # Какой порт будет на сервисе
+      targetPort: 8080                    #!! Порт на поде (8080 на nginx-unprivileged)

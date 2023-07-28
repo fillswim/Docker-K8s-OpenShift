@@ -1,0 +1,107 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: nginx
+  labels:
+    app: quote-app
+spec:                                                 # Спецификация DeploymentConfig
+  replicas: 1
+  template:                                             # Описание пода
+    metadata:
+      labels:
+        app: nginx                                      # Лейблы подов
+    spec:                                             # Спецификация пода
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged 
+          ports:
+            - containerPort: 80                         # несет исключительно информационный характер
+          volumeMounts:                                 # Подключаемые тома, монтируемые в файловую систему контейнера
+            - mountPath: /usr/share/nginx/html            # Путь
+              name: nginx-html                            # Название тома
+            - mountPath: /etc/nginx
+              name: nginx-conf
+      volumes:                                          # Описание ранее смонтированных томов
+        - name: nginx-html                                # Имя тома
+          configMap:                                      # Какие данные должны быть в этом томе
+            name: nginx-html
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+
+---
+
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: quote-service
+  labels:
+    app: quote-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: quote-service
+    spec:
+      containers:
+        - name: quote-service
+          image: docker.io/peliseev/architectural-sketches:quote-service
+          ports:
+            - containerPort: 80
+
+---
+
+apiVersion: v1                                                # Создается для общения подов между собой
+kind: Service
+metadata: 
+  name: nginx-service
+  labels:
+    app: quote-app
+spec:
+  ports:
+    - name: http
+      port: 80                                                # Порт, который будет виден для других подов кластера
+      protocol: TCP
+      targetPort: 8080                                        # Порт, который слушает контейнер
+  selector:
+    app: nginx                                                # К каким подам применять сервис
+  sessionAffinity: None                                       # При включенном, все запросы попадают на один и тот же под
+  type: ClusterIP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata: 
+  name: quoteservice
+  labels:
+    app: quote-app
+spec:
+  ports:
+    - name: http
+      port: 3000                                              # Порт, который будет виден для других подов кластера
+      protocol: TCP
+      targetPort: 3000                                        # Порт, который слушает контейнер
+  selector:
+    app: quote-service
+  sessionAffinity: None
+  type: ClusterIP
+  
+---
+
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: quote
+  labels:
+    app: quote-app
+spec:
+  host: quote.apps-crc.testing                              # Адрес
+  to:
+    kind: Service
+    name: nginx-service                                       # Какой сервис выставляется наружу
+    weight: 100
+  port:
+    targetPort: http                                          # Имя порта в сервисе, который выставляется наружу
+  wildcardPolicy: None                                        # Sub-domain: a.quote.apps-crc.testing

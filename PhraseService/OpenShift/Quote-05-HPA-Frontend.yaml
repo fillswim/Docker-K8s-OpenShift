@@ -1,0 +1,34 @@
+apiVersion: autoscaling/v2                ### Описание autoscaling
+kind: HorizontalPodAutoscaler
+
+# oc apply -f ./PhraseService/OpenShift/Quote-05-HPA-Frontend.yaml
+# oc delete -f ./PhraseService/OpenShift/Quote-05-HPA-Frontend.yaml
+
+metadata:
+  name: quote-frontend-autoscaling                 # Название autoscaling
+  labels:
+    app: quote-app
+
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment                      # Что будет аутоскелить - Deployment
+    name: quote-frontend-deployment                # С каким названием деплоймент будет автоскеллить (совпадает с названием деплоймента)
+
+  minReplicas: 2                          # Минимальное количество подов 
+  maxReplicas: 3                          # Максимальное количество подов
+
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50            # Если средняя нагрузка на поды будет выше 50%, то autoscaling добавит подов, если ниже, по убавит их количество
+
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80            # Если средняя нагрузка на поды будет выше 80%, то autoscaling добавит подов, если ниже, по убавит их количество

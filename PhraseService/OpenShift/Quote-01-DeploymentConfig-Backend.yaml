@@ -1,0 +1,27 @@
+apiVersion: "apps.openshift.io/v1"
+kind: "DeploymentConfig"
+
+# oc apply -f ./PhraseService/OpenShift/Quote-01-DeploymentConfig-Backend.yaml
+# oc delete -f ./PhraseService/OpenShift/Quote-01-DeploymentConfig-Backend.yaml
+
+metadata:                               ### Описание деплоймента
+  name: quote-backend-deployment                # Название деплоймента (будет использоваться в автоселлере)
+  labels:                               # Лейбл деплоймента
+    app: quote-app
+    
+spec:                                   ### Спецификация
+  replicas: 1
+
+  template:                             ### Описание подов
+
+    metadata:                           ## Описание пода
+      labels:                           # Лейблы подов Должны совпадать с selector
+        app: quote-backend-pod                  #! Сервис будет искать поды с этими лейблы, чтобы на них распределять трафик
+
+    spec:
+      containers:                       # Какие контейнеры будут запускаться в подах
+
+      - name: quote-backend-container           # Контейнер
+        image: docker.io/fillswim/phraseservice-backend:latest
+        ports:
+        - containerPort: 3000             #!! Порт на поде

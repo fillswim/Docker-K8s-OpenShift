@@ -1,0 +1,45 @@
+apiVersion: "apps.openshift.io/v1"
+kind: "DeploymentConfig"
+
+# oc apply -f ./PhraseService/OpenShift/Quote-04-DeploymentConfig-Frontend.yaml
+# oc delete -f ./PhraseService/OpenShift/Quote-04-DeploymentConfig-Frontend.yaml
+
+metadata:                               ### Описание деплоймента
+  name: quote-frontend-deployment                # Название деплоймента (будет использоваться в автоселлере)
+  labels:                               # Лейбл деплоймента
+    app: quote-app
+    
+spec:                                   ### Спецификация
+  replicas: 1
+
+  template:                             ### Описание подов
+
+    metadata:                           ## Описание пода
+      labels:                           # Лейблы подов Должны совпадать с selector
+        app: quote-frontend-pod                  #! Сервис будет искать поды с этими лейблы, чтобы на них распределять трафик
+
+    spec:
+      containers:                       # Какие контейнеры будут запускаться в подах
+
+      - name: quote-frontend-container           # Контейнер
+        image: nginxinc/nginx-unprivileged:latest
+        ports:
+        - containerPort: 8080             #!! Порт на поде (nginx-unprivileged)
+          name: http
+          protocol: TCP
+
+        volumeMounts:
+        - name: config-html
+          mountPath: /usr/share/nginx/html  # /index.html
+
+        - name: config-nginx
+          mountPath: /etc/nginx             # /nginx.conf
+
+      volumes:
+      - name: config-html
+        configMap:
+          name: frontend-config-html
+
+      - name: config-nginx
+        configMap:
+          name: frontend-config-nginx

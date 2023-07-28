@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+
+# kubectl apply -f PhraseService/K8s/Quote-01-Deployment-Backend.yaml
+# kubectl delete -f PhraseService/K8s/Quote-01-Deployment-Backend.yaml
+
+metadata:                               ### Описание деплоймента
+  name: quote-backend-deployment                # Название деплоймента (будет использоваться в автоселлере)
+  labels:                               # Лейбл деплоймента
+    app: quote-app
+    
+spec:                                   ### Спецификация
+  selector:                             # С какими подами будет работать деплоймент должны совпадать с (template/metadata/labels)
+
+    matchLabels:                        # С какими лейблами подов будет работать деплоймент
+      app: quote-backend-pod
+
+  template:                             ### Описание подов
+
+    metadata:                           ## Описание пода
+      labels:                           # Лейблы подов Должны совпадать с selector
+        app: quote-backend-pod                  #! Сервис будет искать поды с этими лейблы, чтобы на них распределять трафик
+
+    spec:
+      containers:                       # Какие контейнеры будут запускаться в подах
+
+      - name: quote-backend-container           # Контейнер
+        image: fillswim/phraseservice-backend:latest
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000             #!! Порт на поде
