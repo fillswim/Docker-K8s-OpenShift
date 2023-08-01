@@ -1,3 +1,5 @@
+![OpenShift](../../images/OpenShift.png)
+
 # OpenShift
 # Подготовка OpenShift Local
 Создать CodeReady Containers:

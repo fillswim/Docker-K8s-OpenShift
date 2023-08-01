@@ -1,3 +1,5 @@
+![K8s](../../images/K8s.png)
+
 # Kubernetes
 # Развертывание в K8s
 ## <u>ConfigMap</u>

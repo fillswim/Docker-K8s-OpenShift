@@ -1,3 +1,5 @@
+![Docker](../../images/Docker%20Compose.jpg)
+
 # Docker Compose
 # Build:
 ## из готовых образов:
